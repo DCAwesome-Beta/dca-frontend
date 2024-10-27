@@ -133,7 +133,7 @@ export const WalletActivityDetails: React.FC<WalletActivityDetailsProps> = ({
                     size='md'
                     variant='solid'
                   >
-                    {transaction.state}
+                    {transaction.state + (transaction.transactionScreeningEvaluation ? " Screening Results - " + transaction.transactionScreeningEvaluation.ruleName : "")}
                   </Chip>
                 )
               }

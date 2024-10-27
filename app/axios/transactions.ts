@@ -15,18 +15,21 @@
 // limitations under the License.
 
 "use client";
-import { axios } from "@/app/axios";
+import { axios as axiosCustom } from "@/app/axios";
 import { useQuery } from "react-query";
 import { useMutation } from "react-query";
+import { v4 as uuidv4 } from 'uuid';
 import {
+  BlockchainEnum,
   EstimateFeeInput,
   EstimateFeeResponse,
   Transaction,
 } from "../shared/types";
+import axios from "axios";
 
 // Get transactions query
 const transactionsHelper = async (walletId: string) => {
-  const response = await axios.get<{
+  const response = await axiosCustom.get<{
     transactions: Transaction[];
   }>(`/transactions`, { params: { walletIds: [walletId] } });
 
@@ -40,9 +43,25 @@ export const useTransactionsQuery = (walletId: string) => {
   });
 };
 
+const screenAddressHelper = async (input: {address: string, chain: BlockchainEnum}) => {
+  const response = await axios.post<any>("https://api.circle.com/v1/w3s/compliance/screening/addresses", {
+    idempotencyKey: uuidv4(),
+    address: input.address,
+    chain: input.chain
+  }, {
+    headers: {
+      "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
+      'Content-Type': 'application/json'
+    }
+  })
+  return response.data;
+}
+
+export const useScreenAddressMutation = () => useMutation(screenAddressHelper);
+
 // Get transaction details query
 const transactionHelper = async (transactionId: string) => {
-  const response = await axios.get<{
+  const response = await axiosCustom.get<{
     transaction: Transaction;
   }>(`/transactions/${transactionId}`);
 
@@ -58,7 +77,7 @@ export const useTransactionQuery = (transactionId: string) => {
 
 // Estimate Transfer Fee
 const estimateFeeHelper = async (input: EstimateFeeInput) => {
-  const response = await axios.post<EstimateFeeResponse>(
+  const response = await axiosCustom.post<EstimateFeeResponse>(
     "/transactions/transfer/estimateFee",
     input
   );
@@ -76,7 +95,7 @@ const validateAddressMutationHelper = async ({
   address: string;
   blockchain: string;
 }) => {
-  const { data } = await axios.post<{}, { data: { isValid: boolean } }>(
+  const { data } = await axiosCustom.post<{}, { data: { isValid: boolean } }>(
     "/transactions/validateAddress",
     {
       address,
@@ -98,7 +117,7 @@ const createTransferHelper = async (bodyParams: {
   amounts: string[];
   feeLevel: "LOW" | "MEDIUM" | "HIGH";
 }) => {
-  const response = await axios.post<{ challengeId: string }>(
+  const response = await axiosCustom.post<{ challengeId: string }>(
     "/transactions/transfer",
     bodyParams
   );

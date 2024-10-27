@@ -110,6 +110,7 @@ export type Transaction = {
   refId?: string;
   sourceAddress?: string;
   state: TransactionStateEnum;
+  transactionScreeningEvaluation?: TransactionScreeningOutput;
   tokenId?: string;
   transactionType: TransactionTypeEnum;
   txHash?: string;
@@ -182,6 +183,13 @@ export const blockchainNames: Record<BlockchainEnum | string, string> = {
   [BlockchainEnum.SOL_DEVNET]: "Solana Devnet",
   "": "Unknown blockchain",
 };
+
+export type TransactionScreeningOutput = {
+  ruleName: string;
+  actions: string[];
+  reasons: any[];
+  screeningDate: string;
+}
 
 export type EstimateFeeInput = {
   amount: string[];
