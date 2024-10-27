@@ -115,12 +115,12 @@ export default function CreateWalletPage() {
         loading={createLoading}
         onClick={async () => {
           if (selected) {
-            const { data: challengeId } =
+            const { data } =
               await createWalletMutation.mutateAsync({
                 blockchain: selected,
               });
 
-            client?.execute(challengeId, (err) => {
+            client?.execute(data.challengeId, (err) => {
               setLoading(true);
               if (err) {
                 setLoading(false);

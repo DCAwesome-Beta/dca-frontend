@@ -78,6 +78,8 @@ export const useWallet = (id: string) => {
 
 export const useCreateWallet = () => {
   return useMutation((input: { blockchain: BlockchainEnum }) => {
-    return axios.post<string>(`/wallets`, input);
-  });
+    return axios.post<{
+      challengeId: string;
+    }>(`/wallets`, input);
+  }); 
 };
