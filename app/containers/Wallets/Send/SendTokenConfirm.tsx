@@ -28,23 +28,43 @@ import {
   tokenHelper,
 } from "@/app/shared/utils";
 import { Button, Chip } from "@mui/joy";
-import { useCreateTransferMutation } from "@/app/axios";
+import { useCreateTransferMutation, useScreenAddressMutation } from "@/app/axios";
 import { BlockchainEnum, blockchainNames } from "@/app/shared/types";
 import { TextField } from "@/app/components/TextField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/16/solid";
 
 export const SendTokenConfirm = () => {
   const { tokenName, walletId, setStep, tokenAndRecipient, estimatedFee } =
     useSendTokenContext();
   const [loading, setLoading] = useState(false);
+  const [risk, setRisk] = useState("");
   const { client } = useW3sContext();
   const transferMutation = useCreateTransferMutation();
+  const screeningMutation = useScreenAddressMutation();
 
   const imageSymbol = tokenHelper(tokenName);
 
+  useEffect(() => {
+    const fetchRisk = async () => {
+      setLoading(true);
+      const response = await screeningMutation.mutateAsync({
+        address: tokenAndRecipient.address,
+        chain: tokenAndRecipient.network as any,
+      });
+      if (response.data.decision.reasons) {
+        setRisk(response.data.decision.reasons[0].riskScore);
+      } else {
+        setRisk("LOW");
+      }
+      setLoading(false)
+    };
+    fetchRisk()
+  }, [])
+
   const handleSubmit = async () => {
     setLoading(true);
+    
     const { challengeId } = await transferMutation.mutateAsync({
       destinationAddress: tokenAndRecipient.address,
       tokenId: tokenAndRecipient.tokenId,
@@ -80,6 +100,11 @@ export const SendTokenConfirm = () => {
           <span className='text-3xl text-center font-semibold max-w-80'>
             {tokenAndRecipient.amount} {imageSymbol.symbol}
           </span>
+          {(risk === "HIGH" || risk === "SEVERE") && (
+            <span className="text-md text-center font-bold text-red-500	">
+              This transaction has been flagged as {risk} risk. <br/> Please proceed carefully.
+            </span>
+          )}
         </div>
 
         {/* Some table here for the amounts */}
