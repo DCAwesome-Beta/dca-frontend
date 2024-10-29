@@ -14,7 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { NextAuthOptions, Session, User } from "next-auth";
 import { axios } from "@/app/axios";
 import {
   GasFeeObject,
@@ -22,7 +21,6 @@ import {
   TransactionStateEnum,
   TransactionTypeEnum,
 } from "./types";
-import CredentialsProvider from "next-auth/providers/credentials";
 
 export const calculateSum = (amounts: string[]): string => {
   const finalSum = amounts.reduce((sum, amount) => Number(amount) + sum, 0);
@@ -164,102 +162,25 @@ export const getTransactionOperation = (
   return { operation, operator };
 };
 
-export const validOnboardStatus = async (
-  session: Session,
-): Promise<boolean> => {
-  try {
-    const response = await axios.get<{
-      user: {
-        securityQuestionStatus: string;
-        pinStatus: string;
-      };
-    }>(`/users/${session.user.userId}`);
+// export const validOnboardStatus = async (
+//   session: Session,
+// ): Promise<boolean> => {
+//   try {
+//     const response = await axios.get<{
+//       user: {
+//         securityQuestionStatus: string;
+//         pinStatus: string;
+//       };
+//     }>(`/users/${session.user.userId}`);
 
-    if (
-      response?.data?.user.pinStatus == "ENABLED" &&
-      response?.data?.user.securityQuestionStatus == "ENABLED"
-    ) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    return false;
-  }
-};
-
-export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
-  providers: [
-    CredentialsProvider({
-      id: "SignIn",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, _req): Promise<any> {
-        if (!credentials) return null;
-        const userInfo = await axios.post("/signin", {
-          password: credentials?.password,
-          email: credentials?.email,
-        });
-        if (userInfo) {
-          // Any object returned will be saved in `user` property of the JWT
-          const user = {
-            userId: userInfo.data.userId,
-            userToken: userInfo.data.userToken,
-            encryptionKey: userInfo.data.encryptionKey,
-            challengeId: userInfo.data?.challengeId,
-          };
-          return user;
-        } else {
-          return null;
-        }
-      },
-    }),
-    CredentialsProvider({
-      id: "SignUp",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, _req): Promise<any> {
-        if (!credentials) return null;
-        const userInfo = await axios.post("/signup", {
-          password: credentials?.password,
-          email: credentials?.email,
-        });
-        if (userInfo) {
-          if (userInfo.status === 201) {
-            throw Error(
-              "This email address has already been used, please sign in",
-            );
-          }
-          // Any object returned will be saved in `user` property of the JWT
-          const user = {
-            userId: userInfo.data.userId,
-            userToken: userInfo.data.userToken,
-            encryptionKey: userInfo.data.encryptionKey,
-            challengeId: userInfo.data?.challengeId,
-          };
-          return user;
-        } else {
-          return null;
-        }
-      },
-    }),
-  ],
-  callbacks: {
-    jwt: async ({ token, user }) => {
-      user && (token.user = user);
-      return token;
-    },
-    session: async ({ session, token }) => {
-      session.user = token.user as User;
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/signin",
-  },
-  debug: process.env.NODE_ENV !== "production",
-};
+//     if (
+//       response?.data?.user.pinStatus == "ENABLED" &&
+//       response?.data?.user.securityQuestionStatus == "ENABLED"
+//     ) {
+//       return true;
+//     }
+//     return false;
+//   } catch (error) {
+//     return false;
+//   }
+// };

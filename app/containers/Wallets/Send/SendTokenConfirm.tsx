@@ -19,7 +19,6 @@ import {
   Content,
   CopyButton,
   useSendTokenContext,
-  useW3sContext,
 } from "@/app/components";
 import Image from "next/image";
 import {
@@ -39,7 +38,6 @@ export const SendTokenConfirm = () => {
     useSendTokenContext();
   const [loading, setLoading] = useState(false);
   const [risk, setRisk] = useState("");
-  const { client } = useW3sContext();
   const transferMutation = useCreateTransferMutation();
   const screeningMutation = useScreenAddressMutation();
 
@@ -64,20 +62,19 @@ export const SendTokenConfirm = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    
-    const { challengeId } = await transferMutation.mutateAsync({
-      destinationAddress: tokenAndRecipient.address,
-      tokenId: tokenAndRecipient.tokenId,
-      walletId,
-      amounts: [tokenAndRecipient.amount],
-      feeLevel: "LOW",
-    });
+    try {
 
-    client?.execute(challengeId, (error) => {
-      if (!error) {
-        setStep(3);
-      }
-    });
+      await transferMutation.mutateAsync({
+        destinationAddress: tokenAndRecipient.address,
+        tokenId: tokenAndRecipient.tokenId,
+        walletId,
+        amount: tokenAndRecipient.amount,
+        feeLevel: "LOW",
+      });
+      setStep(3);
+    } catch (error) {
+      console.log(error);
+    }
     setLoading(false);
   };
 

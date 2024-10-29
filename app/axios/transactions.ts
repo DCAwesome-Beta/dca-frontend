@@ -114,15 +114,14 @@ const createTransferHelper = async (bodyParams: {
   destinationAddress: string;
   tokenId: string;
   walletId: string;
-  amounts: string[];
+  amount: string;
   feeLevel: "LOW" | "MEDIUM" | "HIGH";
 }) => {
-  const response = await axiosCustom.post<{ challengeId: string }>(
+  await axiosCustom.post(
     "/transactions/transfer",
     bodyParams
   );
 
-  return response.data;
 };
 
 export const useCreateTransferMutation = () =>

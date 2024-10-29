@@ -15,7 +15,7 @@
 // limitations under the License.
 
 import ax, { AxiosError } from "axios";
-import { getSession, signOut } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 const axios = ax.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -31,12 +31,9 @@ axios.interceptors.request.use(async (request) => {
 
   // if token header not set
   if (!Boolean(tokenDefault)) {
-    const session = await getSession({
-      req: request,
-    });
-
-    if (session) {
-      const bearerToken = `Bearer ${session.user.userToken}`;
+    const token = localStorage.getItem("token");
+    if (token) {
+      const bearerToken = `Bearer ${token}`;
       request.headers.Authorization = bearerToken;
       axios.defaults.headers.Authorization = bearerToken;
     }
@@ -45,15 +42,5 @@ axios.interceptors.request.use(async (request) => {
   return request;
 });
 
-axios.interceptors.response.use(undefined, async (error: unknown) => {
-  if (error instanceof AxiosError && error.response?.status === 403) {
-    await signOut({
-      callbackUrl: "/signin",
-      redirect: true,
-    });
-  }
-
-  throw error;
-});
 
 export { axios };

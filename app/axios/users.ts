@@ -32,3 +32,35 @@ export const useRestorePinMutation = () => {
     mutationFn: () => restorePinHelper(),
   });
 };
+
+export const loginHelper = async (input: {email: string, password: string}) => {
+  const response = await axios.post<{ email: string, token: string }>(
+    "/signin",
+    { email: input.email, password: input.password }
+  );
+  localStorage.setItem("token", response.data.token);
+  return response.data;
+}
+
+export const useLoginMutation = () => {
+  return useMutation(loginHelper);
+}
+
+export const signupHelper = async (input: {email: string, password: string}) => {
+  try {
+    const response = await axios.post<{ email: string, token: string }>(
+      "/signup",
+      { email: input.email, password: input.password }
+    );
+    localStorage.setItem("token", response.data.token);
+
+    return response.data;
+  } catch (error: any) {
+    return error.message;
+  
+  }
+}
+
+export const useSignupMutation = () => {
+  return useMutation(signupHelper);
+}

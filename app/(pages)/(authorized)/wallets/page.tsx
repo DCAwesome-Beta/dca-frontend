@@ -21,12 +21,13 @@ import { useEffect, useState } from "react";
 import { LoadingWrapper } from "@/app/components";
 import { UseQueryOptions } from "react-query";
 import { Button, Typography } from "@mui/joy";
-import { signOut } from "next-auth/react";
 import Image from "next/image";
+import { useAuthContext } from "@/app/components/Providers/AuthProvider";
 
 export default function WalletPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const {signout} = useAuthContext()
 
   const refetchIntervalFn: UseQueryOptions["refetchInterval"] = (
     _data,
@@ -72,7 +73,7 @@ export default function WalletPage() {
           Sign out and restart the app to try again
         </Typography>
 
-        <Button className='w-full' onClick={() => signOut()}>
+        <Button className='w-full' onClick={() => signout()}>
           Sign out
         </Button>
       </LoadingWrapper>

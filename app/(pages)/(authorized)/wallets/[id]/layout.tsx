@@ -15,7 +15,7 @@
 // limitations under the License.
 
 "use client";
-import { CopyButton, useW3sContext } from "@/app/components";
+import { CopyButton } from "@/app/components";
 import { blockchainMeta, getAddressAbbreviation } from "@/app/shared/utils";
 import {
   CircularProgress,
@@ -26,7 +26,6 @@ import {
   MenuItem,
   Tooltip,
 } from "@mui/joy";
-import { signOut } from "next-auth/react";
 import { useRestorePinMutation, useWallet, useWallets } from "@/app/axios";
 import Image from "next/image";
 import {
@@ -38,6 +37,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { useRouter } from "next/navigation";
 import { blockchainNames } from "@/app/shared/types";
+import { useAuthContext } from "@/app/components/Providers/AuthProvider";
 
 type WalletLayoutParams = {
   /*
@@ -54,32 +54,17 @@ export default function WalletLayout({
   params: WalletLayoutParams;
 }) {
   const router = useRouter();
-  const { client } = useW3sContext();
   const { data: wallet } = useWallet(params.id);
   const { data: wallets } = useWallets();
   const restorePin = useRestorePinMutation();
+  const { signout } = useAuthContext();
 
   const blockchainInfo = blockchainMeta(wallet?.data.wallet.blockchain);
   const walletAddress = wallet?.data.wallet.address ?? "";
 
-  const handleChangePin = async () => {
-    const challengeId = await restorePin.mutateAsync();
-
-    client?.execute(challengeId, (error) => {
-      if (!error) {
-        // handle successful changing of pin.
-        alert("Your pin has successfully been reset");
-      }
-
-      // handle change pin error (e.g. user closed out, bad answers, etc).
-    });
-  };
-
-  const handleSignOut = () =>
-    signOut({
-      redirect: true,
-      callbackUrl: process.env.NEXTAUTH_URL,
-    });
+  const handleSignOut = () => {
+    signout();
+  }
 
   return (
     <>
@@ -144,9 +129,6 @@ export default function WalletLayout({
               }}
             >
               <PlusIcon width={16} /> Create new wallet
-            </MenuItem>
-            <MenuItem onClick={handleChangePin}>
-              <Cog6ToothIcon width={16} /> Change Pin
             </MenuItem>
             <MenuItem onClick={handleSignOut}>
               <ArrowRightStartOnRectangleIcon width={16} />

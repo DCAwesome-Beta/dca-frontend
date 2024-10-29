@@ -125,6 +125,7 @@ export type EstimatedFee = {
   gasPrice?: string;
   maxFee?: string;
   priorityFee?: string;
+  networkFee?: string;
 };
 
 export enum TransactionTypeEnum {

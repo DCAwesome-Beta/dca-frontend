@@ -1,7 +1,7 @@
 "use client";
 
 import { useCreateWallet, useWallets } from "@/app/axios";
-import { BackButton, Content, useW3sContext } from "@/app/components";
+import { BackButton, Content } from "@/app/components";
 import { BlockchainEnum, blockchainNames } from "@/app/shared/types";
 import { blockchainMeta } from "@/app/shared/utils";
 import { CheckIcon } from "@heroicons/react/16/solid";
@@ -13,7 +13,6 @@ import { useEffect, useRef, useState } from "react";
 export default function CreateWalletPage() {
   const createWalletMutation = useCreateWallet();
   const router = useRouter();
-  const { client } = useW3sContext();
 
   const previousWalletsCount = useRef<number>(0); // Ref to hold the previous value
 
@@ -119,14 +118,6 @@ export default function CreateWalletPage() {
               await createWalletMutation.mutateAsync({
                 blockchain: selected,
               });
-
-            client?.execute(data.challengeId, (err) => {
-              setLoading(true);
-              if (err) {
-                setLoading(false);
-                return; // handle error
-              }
-            });
           }
         }}
       >

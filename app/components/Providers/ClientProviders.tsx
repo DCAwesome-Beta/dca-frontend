@@ -18,11 +18,10 @@
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { CssVarsProvider, CssBaseline } from "@mui/joy";
-import { SessionProvider } from "next-auth/react";
 import { useServerInsertedHTML } from "next/navigation";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { W3sProvider } from "./W3sProvider";
+import { AuthProvider } from "./AuthProvider";
 
 const queryClient = new QueryClient();
 
@@ -32,13 +31,13 @@ export const ClientProviders = ({
   children: React.ReactNode;
 }) => {
   return (
-    <SessionProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeRegistry options={{ key: "joy" }}>
-          <W3sProvider>{children}</W3sProvider>
-        </ThemeRegistry>
-      </QueryClientProvider>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ThemeRegistry options={{ key: "joy" }}>
+              {children}
+          </ThemeRegistry>
+        </AuthProvider>
+    </QueryClientProvider>
   );
 };
 

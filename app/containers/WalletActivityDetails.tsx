@@ -114,7 +114,7 @@ export const WalletActivityDetails: React.FC<WalletActivityDetailsProps> = ({
                 </Chip>
               }
               label='Gas Fee'
-              value={`${roundNum(transaction?.networkFee ?? "0", 8)} ${transaction?.blockchain}`}
+              value={`${roundNum(transaction?.networkFee ?? transaction?.estimatedFee?.networkFee ?? "0", 8)} ${transaction?.blockchain || ''}`}
             />
             <TextField
               value={transaction?.txHash ?? "Not yet available"}
@@ -133,7 +133,7 @@ export const WalletActivityDetails: React.FC<WalletActivityDetailsProps> = ({
                     size='md'
                     variant='solid'
                   >
-                    {transaction.state + (transaction.transactionScreeningEvaluation ? " Screening Results - " + transaction.transactionScreeningEvaluation.ruleName : "")}
+                    {transaction.state + (transaction.transactionScreeningEvaluation && transaction.transactionScreeningEvaluation.ruleName ? " Screening Results - " + transaction.transactionScreeningEvaluation.ruleName : "")}
                   </Chip>
                 )
               }
