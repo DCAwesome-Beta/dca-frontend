@@ -56,8 +56,7 @@ export default function CreateWalletPage() {
           BlockchainEnum.ETH_SEPOLIA,
           BlockchainEnum.AVAX_FUJI,
           BlockchainEnum.SOL_DEVNET,
-          BlockchainEnum.ARB_SEPOLIA,
-          BlockchainEnum.NEAR_TESTNET
+          BlockchainEnum.ARB_SEPOLIA
         ].map((blockchain) => (
           <Sheet
             key={blockchain}

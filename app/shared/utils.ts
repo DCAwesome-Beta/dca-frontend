@@ -99,12 +99,6 @@ export const blockchainMeta = (blockchain: string | undefined) => {
         testnet: "Solana Devnet",
         nativeTokenName: "DevnetSOL",
       };
-    case "NEAR-TESTNET":
-      return {
-        svg: `/Near.svg`,
-        testnet: "NEAR Testnet",
-        nativeTokenName: "NEAR",
-      };
     case "ARB-SEPOLIA":
       return {
         svg: `/Arbitrum.svg`,

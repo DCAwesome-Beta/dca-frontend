@@ -103,7 +103,7 @@ export default function WalletLayout({
             )}
           </MenuButton>
           <Menu placement='bottom-end' size='sm'>
-            {wallets?.data.wallets.map((wallet) => {
+            {wallets?.data.wallets.filter(wallet => blockchainNames[wallet.blockchain]).map((wallet) => {
               // hide currently selected wallet
               if (wallet.id === params.id) return null;
               return (
