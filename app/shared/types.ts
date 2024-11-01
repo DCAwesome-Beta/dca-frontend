@@ -171,6 +171,10 @@ export enum BlockchainEnum {
   MATIC = "MATIC",
   SOL_DEVNET = "SOL-DEVNET",
   SOL = "SOL",
+  ARB_SEPOLIA = "ARB-SEPOLIA",
+  ARB = "ARB",
+  NEAR_TESTNET = "NEAR-TESTNET",
+  NEAR = "NEAR",
 }
 
 export const blockchainNames: Record<BlockchainEnum | string, string> = {
@@ -182,6 +186,10 @@ export const blockchainNames: Record<BlockchainEnum | string, string> = {
   [BlockchainEnum.MATIC]: "Polygon",
   [BlockchainEnum.SOL]: "Solana",
   [BlockchainEnum.SOL_DEVNET]: "Solana Devnet",
+  [BlockchainEnum.ARB]: "Arbitrum",
+  [BlockchainEnum.ARB_SEPOLIA]: "Arbitrum Sepolia",
+  [BlockchainEnum.NEAR]: "NEAR",
+  [BlockchainEnum.NEAR_TESTNET]: "NEAR Testnet",
   "": "Unknown blockchain",
 };
 
