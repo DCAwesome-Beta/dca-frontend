@@ -21,6 +21,7 @@ import { useMutation } from "react-query";
 import { v4 as uuidv4 } from 'uuid';
 import {
   BlockchainEnum,
+  EstimateCCTPFeeInput,
   EstimateFeeInput,
   EstimateFeeResponse,
   Transaction,
@@ -31,7 +32,7 @@ import axios from "axios";
 const transactionsHelper = async (walletId: string) => {
   const response = await axiosCustom.get<{
     transactions: Transaction[];
-  }>(`/transactions`, { params: { walletIds: [walletId] } });
+  }>(`/transactions`, { params: { walletIds: [walletId], operation: "TRANSFER" } });
 
   return response.data.transactions;
 };
@@ -85,7 +86,19 @@ const estimateFeeHelper = async (input: EstimateFeeInput) => {
   return response.data;
 };
 
+
 export const useEstimateFeeMutation = () => useMutation(estimateFeeHelper);
+
+const estimateContractFeesHelper = async (input: EstimateCCTPFeeInput) => {
+  const response = await axiosCustom.post<EstimateFeeResponse>(
+    "/transactions/contract/estimateFee",
+    input
+  );
+
+  return response.data;
+}
+
+export const useEstimateContractFeesMutation  = () => useMutation(estimateContractFeesHelper);
 
 // Validate address for transaction mutation
 const validateAddressMutationHelper = async ({
@@ -126,3 +139,20 @@ const createTransferHelper = async (bodyParams: {
 
 export const useCreateTransferMutation = () =>
   useMutation(createTransferHelper);
+
+const createContractTransactionHelper = async (bodyParams: {
+  contractAddress: string;
+  walletId: string;
+  abiFunctionSignature: string;
+  abiParameters: any[];
+  feeLevel: "LOW" | "MEDIUM" | "HIGH";
+  amount: string | undefined;
+}) => {
+  await axiosCustom.post(
+    "/transactions/contract",
+    bodyParams
+  );
+}
+
+export const useCreateContractTransactionMutation = () =>
+  useMutation(createContractTransactionHelper);

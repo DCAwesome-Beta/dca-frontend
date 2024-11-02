@@ -15,7 +15,7 @@
 // limitations under the License.
 
 import Image from "next/image";
-import { formatDate, tokenHelper } from "@/app/shared/utils";
+import { cctpChainData, formatDate, tokenHelper } from "@/app/shared/utils";
 import { Button } from "@mui/joy";
 import { Content, CopyButton, useSendTokenContext } from "@/app/components";
 import { useParams, useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ import { BlockchainEnum, blockchainNames } from "@/app/shared/types";
 import { TextField } from "@/app/components/TextField";
 
 export const SendTokenSummary: React.FC = () => {
-  const { tokenName, tokenAndRecipient } = useSendTokenContext();
+  const { tokenName, tokenAndRecipient, chain } = useSendTokenContext();
   const router = useRouter();
   const params = useParams();
 
@@ -53,8 +53,9 @@ export const SendTokenSummary: React.FC = () => {
             endDecorator={<CopyButton copyValue={tokenAndRecipient.address} />}
             readOnly
           />
+
           <TextField
-            value={blockchainNames[tokenAndRecipient.network as BlockchainEnum]}
+            value={blockchainNames[tokenAndRecipient.network as BlockchainEnum] + (chain && chain !== tokenAndRecipient.network ? ` -> ${cctpChainData[chain as keyof typeof cctpChainData].name}` : "")}
             label='Network'
             readOnly
           />

@@ -202,6 +202,13 @@ export type EstimateFeeInput = {
   tokenId: string;
 };
 
+export type EstimateCCTPFeeInput = {
+  contractAddress: string;
+  walletId: string;
+  abiFunctionSignature: string;
+  abiParameters: any[];
+}
+
 export type GasFeeObject = {
   gasLimit: string;
   gasPrice: string;

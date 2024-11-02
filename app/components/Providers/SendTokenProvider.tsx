@@ -30,9 +30,13 @@ export const SendTokenContext = createContext<{
   setTokenAndRecipient: (f: SendWalletTokenState) => void;
   estimatedFee: GasFeeObject;
   setEstimatedFee: (f: GasFeeObject) => void;
+  quote: string;
+  setQuote: (f: string) => void;
   setStep: (f: number) => void;
   walletId: string;
   tokenName: string;
+  chain: string;
+  setChain: (f: string) => void;
 }>({
   setStep: () => {},
   tokenAndRecipient: {
@@ -48,9 +52,13 @@ export const SendTokenContext = createContext<{
     gasLimit: "",
     gasPrice: "",
   },
+  quote: "",
+  setQuote: () => {},
   setEstimatedFee: () => {},
   walletId: "",
   tokenName: "",
+  chain: "",
+  setChain: () => {},
 });
 
 export const useSendTokenContext = () => useContext(SendTokenContext);
@@ -80,6 +88,9 @@ export const SendTokenProvider = ({
     gasPrice: "",
   });
 
+  const [quote, setQuote] = useState("");
+  const [chain, setChain] = useState("");
+
   return (
     <SendTokenContext.Provider
       value={{
@@ -90,6 +101,10 @@ export const SendTokenProvider = ({
         setStep,
         walletId,
         tokenName,
+        quote,
+        setQuote,
+        chain,
+        setChain
       }}
     >
       {children}

@@ -15,7 +15,7 @@
 // limitations under the License.
 
 "use client";
-import { tokenHelper } from "@/app/shared/utils";
+import { cctpChainData, quoteCrossChainDeposit, tokenHelper } from "@/app/shared/utils";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import {
@@ -26,14 +26,18 @@ import {
   TextField,
 } from "@/app/components";
 import {
+  useCreateContractTransactionMutation,
+  useEstimateContractFeesMutation,
   useEstimateFeeMutation,
   useValidateAddressMutation,
 } from "@/app/axios/transactions";
 import { useRouter } from "next/navigation";
-import { useWalletBalances } from "@/app/axios";
+import { useWallet, useWalletBalances } from "@/app/axios";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Typography } from "@mui/joy";
+import { Button, Option, Select, Typography } from "@mui/joy";
+import { useState } from "react";
+import { ethers } from "ethers";
 
 export const SendTokenForm = () => {
   const {
@@ -43,11 +47,16 @@ export const SendTokenForm = () => {
     setTokenAndRecipient,
     setStep,
     setEstimatedFee,
+    setChain,
+    setQuote,
+    chain
   } = useSendTokenContext();
   const imageSymbol = tokenHelper(tokenName);
   const router = useRouter();
-
+  const { data: wallet } = useWallet(walletId);
   const estimateFeeMutation = useEstimateFeeMutation();
+  const estimateContractFeeMutation =  useEstimateContractFeesMutation();
+  const contractMutation = useCreateContractTransactionMutation();
   const { data: tokenBalanceData, isLoading } = useWalletBalances(walletId, {
     name: tokenName,
   });
@@ -112,14 +121,32 @@ export const SendTokenForm = () => {
     }
     const tokenId = token?.token.id ?? "";
 
-    const estimatedFee = await estimateFeeMutation.mutateAsync({
-      destinationAddress: data.address,
-      tokenId: tokenId,
-      walletId,
-      amount: [data.amount],
-    });
+   
+    if (chain && chain !== wallet?.data.wallet.blockchain) {
+      console.log("here")
+      const chainData = cctpChainData[token?.token.blockchain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? ""];
+      const destChainData = cctpChainData[chain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? ""];
+      const quote = await quoteCrossChainDeposit(token?.token.blockchain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? "", chain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? "")
+      setQuote(quote);
+      await contractMutation.mutateAsync({
+        contractAddress: chainData.usdc,
+        walletId: walletId,
+        abiFunctionSignature: "approve(address,uint256)",
+        abiParameters: [chainData.cctpTransferContract, ethers.parseUnits(data.amount, 6).toString()],
+        feeLevel: "LOW",
+        amount: undefined
+      })
+    } else {
+      const estimatedFee = await estimateFeeMutation.mutateAsync({
+        destinationAddress: data.address,
+        tokenId: tokenId,
+        walletId,
+        amount: [data.amount],
+      });
+      setEstimatedFee(estimatedFee.low);
 
-    setEstimatedFee(estimatedFee.low);
+    }
+
     setTokenAndRecipient({
       network: token?.token.blockchain ?? "",
       tokenId: tokenId,
@@ -127,6 +154,8 @@ export const SendTokenForm = () => {
     });
     setStep(2);
   };
+
+  const supportedChains = ["ARB-SEPOLIA", "AVAX-FUJI", "BASE-SEPOLIA", "ETH-SEPOLIA", "OP-SEPOLIA"];
 
   return (
     <LoadingWrapper isLoading={isLoading}>
@@ -152,7 +181,35 @@ export const SendTokenForm = () => {
               <Typography level="body-lg" fontWeight={500}>
                 {token?.amount} {token?.token.symbol} available
               </Typography>
+              {(chain && chain !== wallet?.data.wallet.blockchain) && (
+                <span className="text-sm text-center font-bold text-red-500	">
+                  Cross Chain Transactions may take 15-30 minutes to complete
+                </span>
 
+              )}
+
+              {token?.token.symbol === "USDC" && 
+                supportedChains.includes(wallet?.data.wallet.blockchain || "") && (
+                  <Select
+                    onChange={(
+                      event: React.SyntheticEvent | null,
+                      newValue: string | null,
+                    ) => {
+                      if (newValue) {
+                        setChain(newValue as string);
+                      }
+                    }
+                  }
+                    placeholder="Select Destination Chain"
+                    className="w-full"
+                  >
+                    <Option value="ARB-SEPOLIA">Arbitrum Sepolia Testnet</Option>
+                    <Option value="AVAX-FUJI">Avalanche testnet fuji</Option>
+                    <Option value="BASE-SEPOLIA">Base Sepolia Testnet</Option>
+                    <Option value="ETH-SEPOLIA">Ethereum Sepolia Testnet</Option>
+                    <Option value="OP-SEPOLIA">Optimism Sepolia Testnet</Option>
+                  </Select>
+                )}
               <TextField
                 {...register("address")}
                 className="w-full"

@@ -23,24 +23,31 @@ import {
 import Image from "next/image";
 import {
   calculateEstimatedFee,
+  cctpChainData,
   roundNum,
   tokenHelper,
 } from "@/app/shared/utils";
 import { Button, Chip } from "@mui/joy";
-import { useCreateTransferMutation, useScreenAddressMutation } from "@/app/axios";
+import { useCreateContractTransactionMutation, useCreateTransferMutation, useScreenAddressMutation, useWalletBalances } from "@/app/axios";
 import { BlockchainEnum, blockchainNames } from "@/app/shared/types";
 import { TextField } from "@/app/components/TextField";
 import { useEffect, useState } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/16/solid";
+import { ethers } from "ethers";
 
 export const SendTokenConfirm = () => {
-  const { tokenName, walletId, setStep, tokenAndRecipient, estimatedFee } =
+  const { tokenName, walletId, setStep, tokenAndRecipient, estimatedFee, chain, quote } =
     useSendTokenContext();
   const [loading, setLoading] = useState(false);
   const [risk, setRisk] = useState("");
   const transferMutation = useCreateTransferMutation();
   const screeningMutation = useScreenAddressMutation();
+  const contractMutation = useCreateContractTransactionMutation()
+  const { data: tokenBalanceData, isLoading } = useWalletBalances(walletId, {
+    name: tokenName,
+  });
 
+  const token = tokenBalanceData?.data.tokenBalances[0];
   const imageSymbol = tokenHelper(tokenName);
 
   useEffect(() => {
@@ -63,14 +70,27 @@ export const SendTokenConfirm = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      if (chain && chain !== tokenAndRecipient.network) {
+        const chainData = cctpChainData[token?.token.blockchain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? ""];
+        const destChainData = cctpChainData[chain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? ""];
+        await contractMutation.mutateAsync({
+          contractAddress: chainData.cctpTransferContract,
+          walletId,
+          amount: quote,
+          feeLevel: "LOW",
+          abiFunctionSignature: "sendCrossChainDeposit(uint16,address,address,uint256)",
+          abiParameters: [destChainData.chainId, destChainData.cctpTransferContract, tokenAndRecipient.address, ethers.parseUnits(tokenAndRecipient.amount, 6).toString()],
+        });
+      } else {
+        await transferMutation.mutateAsync({
+          destinationAddress: tokenAndRecipient.address,
+          tokenId: tokenAndRecipient.tokenId,
+          walletId,
+          amount: tokenAndRecipient.amount,
+          feeLevel: "LOW",
+        });
 
-      await transferMutation.mutateAsync({
-        destinationAddress: tokenAndRecipient.address,
-        tokenId: tokenAndRecipient.tokenId,
-        walletId,
-        amount: tokenAndRecipient.amount,
-        feeLevel: "LOW",
-      });
+      }
       setStep(3);
     } catch (error) {
       console.log(error);
@@ -113,19 +133,25 @@ export const SendTokenConfirm = () => {
             readOnly
           />
           <TextField
-            value={blockchainNames[tokenAndRecipient.network as BlockchainEnum]}
+            value={blockchainNames[tokenAndRecipient.network as BlockchainEnum] + (chain && chain !== tokenAndRecipient.network ? ` -> ${cctpChainData[chain as keyof typeof cctpChainData].name}` : "")}
             label='Network'
             readOnly
           />
           <TextField
             readOnly
-            startDecorator={
+            endDecorator={
+              estimatedFee.gasLimit !== "" ? (
               <Chip color='success' size='md' variant='solid'>
                 Paid By Circle
               </Chip>
+              ) : (
+              <Chip color='warning' size='md' variant='solid'>
+                Paid By You
+              </Chip>
+              )
             }
             label='Estimated Gas Fee'
-            value={`${roundNum(String(calculateEstimatedFee(estimatedFee)), 8)} ${tokenAndRecipient.network}`}
+            value={`${(chain && chain !== tokenAndRecipient.network ? `${quote}` : "")}${estimatedFee.gasLimit !== "" ? roundNum(String(calculateEstimatedFee(estimatedFee)), 8) : ""} ${tokenAndRecipient.network}`}
           />
         </div>
 
