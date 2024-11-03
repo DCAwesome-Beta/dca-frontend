@@ -27,6 +27,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Content } from "..";
 import { useLoginMutation, useSignupMutation } from "@/app/axios";
+import { useAuthContext } from "../Providers/AuthProvider";
 
 const formSchema = yup.object({
   email: yup
@@ -61,7 +62,7 @@ export const AuthenticationForm: React.FC<AuthenticationFormProps> = ({
   const router = useRouter();
   const signup = useSignupMutation();
   const signin = useLoginMutation();
-
+  const {setToken} = useAuthContext();
   useEffect(() => {
     if (redirect) {
       router.push("/wallets");
@@ -74,6 +75,7 @@ export const AuthenticationForm: React.FC<AuthenticationFormProps> = ({
     if (!isSignIn) {
       const res = await signup.mutateAsync(data);
       if (res) {
+        setToken(res.token)
         return setRedirect(true);
       } else {
         setFormMessage("An error occurred on Sign Up. Please try again.");
@@ -81,8 +83,9 @@ export const AuthenticationForm: React.FC<AuthenticationFormProps> = ({
       setLoading(false);
     } else {
       const res = await signin.mutateAsync(data);
-
+      
       if (res) {
+        setToken(res.token)
         return setRedirect(true);
       } else {
         setFormMessage("Invalid Credentials.");

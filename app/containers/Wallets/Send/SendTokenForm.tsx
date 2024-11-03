@@ -123,7 +123,6 @@ export const SendTokenForm = () => {
 
    
     if (chain && chain !== wallet?.data.wallet.blockchain) {
-      console.log("here")
       const chainData = cctpChainData[token?.token.blockchain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? ""];
       const destChainData = cctpChainData[chain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? ""];
       const quote = await quoteCrossChainDeposit(token?.token.blockchain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? "", chain as "ETH-SEPOLIA" | "AVAX-FUJI" | "ARB-SEPOLIA" | "BASE-SEPOLIA" | "OP-SEPOLIA" ?? "")
