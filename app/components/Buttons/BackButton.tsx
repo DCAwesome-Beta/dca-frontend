@@ -27,10 +27,10 @@ export const BackButton = ({
 }) => {
   return (
     <div className="flex items-center gap-1">
-      <IconButton onClick={onClick}>
+      <IconButton onClick={onClick} className="hover:bg-gray-600">
         <ArrowLeftIcon className="text-gray-500" width={20} />
       </IconButton>
-      <Typography fontWeight={600} level="body-md">
+      <Typography fontWeight={600} level="body-md" className="text-gray-100">
         {children}
       </Typography>
     </div>

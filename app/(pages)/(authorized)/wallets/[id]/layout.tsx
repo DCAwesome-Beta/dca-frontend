@@ -38,6 +38,7 @@ import {
 import { useRouter } from "next/navigation";
 import { blockchainNames } from "@/app/shared/types";
 import { useAuthContext } from "@/app/components/Providers/AuthProvider";
+import React from "react";
 
 type WalletLayoutParams = {
   /*
@@ -51,10 +52,11 @@ export default function WalletLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: WalletLayoutParams;
+  params: any;
 }) {
   const router = useRouter();
-  const { data: wallet } = useWallet(params.id);
+  const { id }: WalletLayoutParams = React.use(params);
+  const { data: wallet } = useWallet(id);
   const { data: wallets } = useWallets();
   const restorePin = useRestorePinMutation();
   const { signout } = useAuthContext();
@@ -94,7 +96,7 @@ export default function WalletLayout({
           <MenuButton
             disabled={restorePin.isLoading}
             variant='plain'
-            className='px-2 text-slate-600'
+            className='px-2 text-slate-600 hover:bg-gray-600'
           >
             {restorePin.isLoading ? (
               <CircularProgress color='neutral' />
@@ -102,10 +104,20 @@ export default function WalletLayout({
               <EllipsisVerticalIcon className='text-slate-600' height={20} />
             )}
           </MenuButton>
-          <Menu placement='bottom-end' size='sm'>
+          <Menu placement='bottom-end' size='sm' 
+          sx={{ 
+            bgcolor: '#000', // Set the background color
+            '& .MuiMenuItem-root': {
+              color: 'white', // Set text color for menu items
+              '&:hover': {
+                bgcolor: 'rgba(255, 255, 255, 0.2)', // Optional hover effect
+                color: 'white'
+              },
+            },
+          }}>
             {wallets?.data.wallets.filter(wallet => blockchainNames[wallet.blockchain]).map((wallet) => {
               // hide currently selected wallet
-              if (wallet.id === params.id) return null;
+              if (wallet.id === id) return null;
               return (
                 <MenuItem
                   key={wallet.id}
@@ -127,10 +139,11 @@ export default function WalletLayout({
               onClick={() => {
                 router.push("/wallets/create");
               }}
+              sx={{ color: 'white' }}
             >
-              <PlusIcon width={16} /> Create new wallet
+              <PlusIcon width={16}/> Create new wallet
             </MenuItem>
-            <MenuItem onClick={handleSignOut}>
+            <MenuItem onClick={handleSignOut} sx={{ color: 'white' }}>
               <ArrowRightStartOnRectangleIcon width={16} />
               Sign out
             </MenuItem>

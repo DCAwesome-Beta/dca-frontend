@@ -135,7 +135,7 @@ export const AuthenticationForm: React.FC<AuthenticationFormProps> = ({
         </div>
       </form>
 
-      <Typography className='text-center text-sm font-medium'>
+      <Typography className='text-center text-sm font-medium text-gray-500'>
         {isSignIn ? "Don't have an account?" : "Already have an account?"}
       </Typography>
 

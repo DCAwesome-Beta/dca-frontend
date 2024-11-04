@@ -40,7 +40,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({
 
   return (
     <Card
-      className={`rounded-lg bg-white ${onClick ? "cursor-pointer hover:bg-slate-50 transition-all" : ""}`}
+      className={`rounded-lg border-none bg-gray-700 ${onClick ? "cursor-pointer hover:bg-gray-600 transition-all" : ""}`}
       onClick={onClick}
     >
       <CardContent className='flex flex-row gap-6'>
@@ -56,9 +56,9 @@ export const TokenCard: React.FC<TokenCardProps> = ({
           <ExclamationCircleIcon width={40} height={40} />
         )}
         <div>
-          <Typography level='body-md'>{tokenMeta.name}</Typography>
+          <Typography level='body-md' className='text-white'>{tokenMeta.name}</Typography>
 
-          <Typography level='body-sm'>{`${amount} ${tokenMeta.name}`}</Typography>
+          <Typography level='body-sm' className='text-white'>{`${amount} ${tokenMeta.name}`}</Typography>
         </div>
       </CardContent>
     </Card>

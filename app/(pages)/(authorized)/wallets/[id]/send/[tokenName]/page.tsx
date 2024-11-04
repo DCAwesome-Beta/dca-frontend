@@ -15,6 +15,7 @@
 // limitations under the License.
 
 import { SendToken } from "@/app/containers/Wallets/Send";
+import React from "react";
 
 interface WalletSendTokenProps {
   params: {
@@ -29,11 +30,12 @@ interface WalletSendTokenProps {
   };
 }
 
-export default function WalletSendTokenPage({ params }: WalletSendTokenProps) {
+export default function WalletSendTokenPage({ params }: any) {
+  const { id, tokenName }: { id: string; tokenName: string } = React.use(params);
   return (
     <SendToken
-      walletId={params.id}
-      tokenName={decodeURIComponent(params.tokenName)}
+      walletId={id}
+      tokenName={decodeURIComponent(tokenName)}
     />
   );
 }

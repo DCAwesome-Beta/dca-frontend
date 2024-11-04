@@ -177,7 +177,7 @@ export const SendTokenForm = () => {
                 src={imageSymbol.svg}
               />
 
-              <Typography level="body-lg" fontWeight={500}>
+              <Typography level="body-lg" fontWeight={500} className="text-white">
                 {token?.amount} {token?.token.symbol} available
               </Typography>
               {(chain && chain !== wallet?.data.wallet.blockchain) && (

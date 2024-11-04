@@ -27,7 +27,7 @@ import {
 } from "@/app/axios";
 import { LoadingWrapper, Content, TokenCard } from "@/app/components";
 import { Tab, TabList, TabPanel, Tabs, Typography } from "@mui/joy";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { blockchainMeta, tokenHelper } from "../shared/utils";
 import { WalletActivity } from "./WalletActivity";
 import Image from "next/image";
@@ -38,7 +38,6 @@ interface WalletDetailsProps {
 
 export const WalletDetails: React.FC<WalletDetailsProps> = ({ id }) => {
   const router = useRouter();
-
   const { data: balanceData, isLoading } = useWalletBalances(id);
   const { data: walletData } = useWallet(id);
   const dripFaucet = useFaucetDripMutation();
@@ -80,13 +79,16 @@ export const WalletDetails: React.FC<WalletDetailsProps> = ({ id }) => {
   const isWalletEmpty =
     !isLoading && balanceData?.data.tokenBalances.length === 0;
 
+  // State to track the active tab
+  const [activeTab, setActiveTab] = useState(0);
+
   return (
     <>
       <LoadingWrapper isLoading={isLoading}>
         <Content>
           {/* Token balance of the testnet main token?? */}
           <Typography
-            className='text-3xl text-center max-w-80 mx-auto'
+            className='text-3xl text-center max-w-80 mx-auto text-white'
             fontWeight={700}
             level='title-lg'
           >
@@ -164,12 +166,30 @@ export const WalletDetails: React.FC<WalletDetailsProps> = ({ id }) => {
             </>
           )}
           {!isWalletEmpty && (
-            <Tabs className='bg-transparent'>
+            <Tabs className='bg-transparent' value={activeTab} onChange={(_, newValue) => {
+              // Ensure newValue is of type number
+              if (typeof newValue === 'number') {
+                setActiveTab(newValue); // Set the state only if newValue is a number
+              }
+            }}>
               <TabList className='grid grid-cols-2'>
-                <Tab color='primary'>Tokens</Tab>
-                <Tab color='primary'>Activity</Tab>
+                <Tab 
+                  className={`text-gray-300 
+                    ${activeTab === 0 ? 'bg-[#311987] text-[#c1a6ff] font-bold' : 'hover:bg-[#2D1D73]'}`} 
+                    
+                  aria-selected={activeTab === 0}
+                >
+                  Tokens
+                </Tab>
+                <Tab 
+                  className={`text-gray-300 
+                    ${activeTab === 1 ? 'bg-[#311987] text-[#c1a6ff] font-bold'  : 'hover:bg-[#2D1D73]'}`} 
+                  aria-selected={activeTab === 1}
+                >
+                  Activity
+                </Tab>
               </TabList>
-              <TabPanel value={0} className='px-0'>
+              <TabPanel value={0} className='px-0 text-white'>
                 <div className='flex grow w-full flex-col gap-2'>
                   {balanceData?.data.tokenBalances.map(
                     (token: TokenBalance) => (
