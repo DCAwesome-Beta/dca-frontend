@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <title>My App</title>
+        <title>DCAwesome</title>
       </head>
       <body className="body-background gradient-banner">
         {/* Header */}
@@ -45,13 +45,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Footer */}
         <footer className="footer">
           <div className="footer-container">
-            <p className="footer-text">&copy; {new Date().getFullYear()} MyApp. All rights reserved.</p>
-            <span className='divider'></span>
-            <ul className="footer-list">
-              <li><a href="/privacy" className="footer-item">Privacy Policy</a></li>
-              <li><a href="/terms" className="footer-item">Terms of Service</a></li>
-              <li><a href="/support" className="footer-item">Support</a></li>
-            </ul>
+            <p className="footer-text">&copy; {new Date().getFullYear()} DCAwesome. All rights reserved.</p>
           </div>
         </footer>
       </body>

@@ -15,6 +15,7 @@
 // limitations under the License.
 
 import { SelectToken } from "@/app/containers/Wallets/Send";
+import React from "react";
 
 interface WalletSendProps {
   params: {
@@ -25,6 +26,7 @@ interface WalletSendProps {
   };
 }
 
-export default function WalletSendPage({ params }: WalletSendProps) {
-  return <SelectToken walletId={params.id} />;
+export default function WalletSendPage({ params }: any) {
+  const { id }: { id: string } = React.use(params);
+  return <SelectToken walletId={id} />;
 }

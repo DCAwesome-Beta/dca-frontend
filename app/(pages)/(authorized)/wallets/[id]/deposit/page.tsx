@@ -15,6 +15,7 @@
 // limitations under the License.
 
 import { Deposit } from "@/app/containers/Deposit";
+import React from "react";
 
 type DepositParams = {
   params: {
@@ -25,6 +26,7 @@ type DepositParams = {
   };
 };
 
-export default function DepositPage({ params }: DepositParams) {
-  return <Deposit walletId={params.id} />;
+export default function DepositPage({ params }: any) {
+  const { id }: { id: string } = React.use(params);
+  return <Deposit walletId={id} />;
 }

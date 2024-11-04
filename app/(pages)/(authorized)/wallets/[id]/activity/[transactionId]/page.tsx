@@ -15,6 +15,7 @@
 // limitations under the License.
 
 import { WalletActivityDetails } from "@/app/containers/WalletActivityDetails";
+import React from "react";
 
 type WalletActivityDetailsParams = {
   params: {
@@ -31,11 +32,12 @@ type WalletActivityDetailsParams = {
 
 export default function WalletActivityDetailsPage({
   params,
-}: WalletActivityDetailsParams) {
+}: any) {
+  const { id, transactionId }: { id: string; transactionId: string } = React.use(params)
   return (
     <WalletActivityDetails
-      walletId={params.id}
-      transactionId={params.transactionId}
+      walletId={id}
+      transactionId={transactionId}
     />
   );
 }

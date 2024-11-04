@@ -15,6 +15,7 @@
 // limitations under the License.
 
 import { WalletDetails } from "@/app/containers/WalletDetails";
+import React from "react";
 
 type WalletDetailsParams = {
   params: {
@@ -25,6 +26,7 @@ type WalletDetailsParams = {
   };
 };
 
-export default function WalletDetailsPage({ params }: WalletDetailsParams) {
-  return <WalletDetails id={params.id} />;
+export default function WalletDetailsPage({ params }: any) {
+  const { id }: { id: string } = React.use(params);
+  return <WalletDetails id={id} />;
 }

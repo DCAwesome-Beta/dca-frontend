@@ -38,6 +38,7 @@ import {
 import { useRouter } from "next/navigation";
 import { blockchainNames } from "@/app/shared/types";
 import { useAuthContext } from "@/app/components/Providers/AuthProvider";
+import React from "react";
 
 type WalletLayoutParams = {
   /*
@@ -51,10 +52,11 @@ export default function WalletLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: WalletLayoutParams;
+  params: any;
 }) {
   const router = useRouter();
-  const { data: wallet } = useWallet(params.id);
+  const { id }: WalletLayoutParams = React.use(params);
+  const { data: wallet } = useWallet(id);
   const { data: wallets } = useWallets();
   const restorePin = useRestorePinMutation();
   const { signout } = useAuthContext();
@@ -115,7 +117,7 @@ export default function WalletLayout({
           }}>
             {wallets?.data.wallets.filter(wallet => blockchainNames[wallet.blockchain]).map((wallet) => {
               // hide currently selected wallet
-              if (wallet.id === params.id) return null;
+              if (wallet.id === id) return null;
               return (
                 <MenuItem
                   key={wallet.id}
