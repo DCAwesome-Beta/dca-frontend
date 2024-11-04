@@ -22,8 +22,10 @@ import { Inter } from "next/font/google";
 import { Metadata } from "next";
 
 import { ClientProviders, Footer } from "@/app/components";
-import { Button, Typography } from "@mui/joy";
+import { Button, Typography, CssVarsProvider } from "@mui/joy";
 import { BookOpenIcon } from "@heroicons/react/16/solid";
+
+import theme from "../theme"; // Go up two levels to reach the app directory
 
 const inter = Inter({
   subsets: ["cyrillic"],
@@ -38,59 +40,67 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         <div id='__next'>
-          <ClientProviders>
-            <div className='gradient-background'>
-              <div className='mx-auto max-w-7xl background-gradient h-screen flex flex-col lg:flex-row lg:gap-x-8 lg:items-start items-center lg:justify-between justify-center lg:px-8 lg:py-12'>
-                {/* Larger Screen Logo */}
-                <div className='lg:block hidden w-64'>
-                  <Image
-                    src={`/CircleLogoWithName.svg`}
-                    className='mr-4'
-                    alt='Circle Logo'
-                    width={140}
-                    height={36}
-                  />
-                  <Typography level='title-lg' className='mt-1'>
-                    User-Controlled Wallets
-                  </Typography>
-                </div>
-                <AppContainer>{children}</AppContainer>
-                {/* Larger Screen Source Code/Docs */}
-                <div className='lg:flex hidden w-64 gap-x-2'>
-                  <a
-                    href='https://github.com/circlefin/w3s-sample-user-controlled-client-web'
-                    target='_blank'
-                  >
-                    <Button
-                      variant='outlined'
-                      startDecorator={
-                        <Image
-                          src={"/Github.svg"}
-                          height={16}
-                          width={16}
-                          alt='github'
-                        />
-                      }
+          <CssVarsProvider theme={theme}>
+            <ClientProviders>
+              <div className='gradient-background'>
+                <div className='mx-auto max-w-7xl background-gradient h-screen flex flex-col lg:flex-row lg:gap-x-8 lg:items-start items-center lg:justify-between justify-center lg:px-8 lg:py-12'>
+                  {/* Larger Screen Logo */}
+                  <div className='lg:block hidden w-64'>
+                    <Image
+                      src={`/circle-logo (1).png`}
+                      className='mr-4'
+                      alt='Circle Logo'
+                      width={140}
+                      height={36}
+                    />
+                    <Typography level='title-lg' className='mt-1 text-gray-200'>
+                      User-Controlled Wallets
+                    </Typography>
+                  </div>
+                  <AppContainer>{children}</AppContainer>
+                  {/* Larger Screen Source Code/Docs */}
+                  <div className='lg:flex hidden w-64 gap-x-2'>
+                    <a
+                      href='https://github.com/circlefin/w3s-sample-user-controlled-client-web'
+                      target='_blank'
                     >
-                      Github
-                    </Button>
-                  </a>
-                  <a
-                    href='https://developers.circle.com/w3s/docs/sample-applications'
-                    target='_blank'
-                  >
-                    <Button
-                      variant='outlined'
-                      startDecorator={<BookOpenIcon width={16} />}
+                      <Button
+                        variant='outlined'
+                        startDecorator={
+                          <Image
+                            src={"/Github.svg"}
+                            height={16}
+                            width={16}
+                            alt='github'
+                          />
+                        }
+                        sx={{
+                          borderColor: 'grey',  // Set the border color to green
+                        }}
+                      >
+                        Github
+                      </Button>
+                    </a>
+                    <a
+                      href='https://developers.circle.com/w3s/docs/sample-applications'
+                      target='_blank'
                     >
-                      Docs
-                    </Button>
-                  </a>
+                      <Button
+                        variant='outlined'
+                        startDecorator={<BookOpenIcon width={16} style={{ color: 'black' }} />}
+                        sx={{
+                          borderColor: 'grey',  // Set the border color to green
+                        }}
+                      >
+                        Docs
+                      </Button>
+                    </a>
+                  </div>
                 </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
-          </ClientProviders>
+            </ClientProviders>
+          </CssVarsProvider> {/* End of CssVarsProvider */}                
         </div>
       </body>
     </html>
@@ -99,12 +109,12 @@ export default function RootLayout({
 
 // Adds top banner/borders for
 const AppContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className='w-full h-full lg:max-h-[660px] lg:max-w-lg lg:border lg:border-solid border-gray-200 lg:rounded-lg lg:shadow-lg flex flex-col relative overflow-hidden lg:mb-0 mb-20 bg-white'>
+  <div className='w-full h-full lg:max-h-[660px] lg:max-w-lg lg:border lg:border-solid border-gray-200 lg:rounded-lg lg:shadow-lg flex flex-col relative overflow-hidden lg:mb-0 mb-20 bg-gray-800'>
     {/* banner for larger screens */}
-    <span className='lg:flex hidden bg-secondary text-white p-3 font-medium items-center gap-x-2.5'>
+    {/* <span className='lg:flex hidden bg-secondary text-white p-3 font-medium items-center gap-x-2.5'>
       <Image src={`/CircleLogo.svg`} alt='Circle Logo' width={20} height={20} />{" "}
       Your app here
-    </span>
+    </span> */}
     {/* banner for smaller screens */}
     <div className='lg:hidden p-4 flex justify-between items-center gradient-banner'>
       <span className='flex items-center'>

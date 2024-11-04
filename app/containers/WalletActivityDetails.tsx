@@ -77,7 +77,7 @@ export const WalletActivityDetails: React.FC<WalletActivityDetailsProps> = ({
           </nav>
 
           {/* Transaction Amount */}
-          <Typography level='h2' className='text-center my-2'>
+          <Typography level='h2' className='text-center my-2 text-white'>
             {`${operation} ${transaction?.amounts?.[0]} ${tokenDetails?.symbol}`}
           </Typography>
 
@@ -91,6 +91,7 @@ export const WalletActivityDetails: React.FC<WalletActivityDetailsProps> = ({
                   <CopyButton copyValue={transaction?.sourceAddress ?? ""} />
                 }
                 readOnly
+                
               />
             )}
             <TextField

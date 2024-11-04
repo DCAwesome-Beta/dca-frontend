@@ -67,7 +67,7 @@ export const WalletActivity: React.FC<WalletActivityProps> = ({ id }) => {
   return (
     <LoadingWrapper isLoading={isLoading}>
       {transactions?.length && (
-        <List className='py-0 px-0'>
+        <List className='py-0 px-0 text-white'>
           {transactions?.map((transaction: Transaction, index: number) => (
             <div key={transaction.id}>
               <TransactionRow
@@ -124,7 +124,7 @@ const TransactionRow = ({
   return (
     <ListItem>
       <ListItemButton
-        className='flex justify-between w-full py-2'
+        className='flex justify-between w-full py-2 hover:bg-gray-700'
         onClick={() =>
           router.push(`/wallets/${walletId}/activity/${transaction.id}`)
         }
@@ -136,12 +136,12 @@ const TransactionRow = ({
             </Chip>
           </span>
           <span>
-            <Typography level='body-md'>
+            <Typography level='body-md' className='text-white'>
               {operator}
               {transaction.amounts && transaction.amounts[0]}{" "}
               {tokenDetails?.symbol}
             </Typography>
-            <Typography level='body-sm'>{formatDate(date)}</Typography>
+            <Typography level='body-sm' className='text-gray-400'>{formatDate(date)}</Typography>
           </span>
         </div>
         <ChevronRightIcon width={24} />
