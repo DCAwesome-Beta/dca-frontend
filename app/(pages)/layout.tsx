@@ -43,25 +43,16 @@ export default function RootLayout({
           <CssVarsProvider theme={theme}>
             <ClientProviders>
               <div className='gradient-background'>
-                <div className='mx-auto max-w-7xl background-gradient h-screen flex flex-col lg:flex-row lg:gap-x-8 lg:items-start items-center lg:justify-between justify-center lg:px-8 lg:py-12'>
+                <div className='mx-auto max-w-7xl bg-[#1F2937] lg:bg-transparent background-gradient h-screen flex flex-col lg:flex-row lg:gap-x-8 lg:items-start items-center lg:justify-between justify-center lg:px-8 lg:py-12'>
                   {/* Larger Screen Logo */}
-                  <div className='lg:block hidden w-64'>
-                    <Image
-                      src={`/circle-logo (1).png`}
-                      className='mr-4'
-                      alt='Circle Logo'
-                      width={140}
-                      height={36}
-                    />
-                    <Typography level='title-lg' className='mt-1 text-gray-200'>
-                      User-Controlled Wallets
-                    </Typography>
+                  <div className='lg:block hidden w-64 nav-logo font-bold'>
+                    DCAwesome
                   </div>
                   <AppContainer>{children}</AppContainer>
                   {/* Larger Screen Source Code/Docs */}
                   <div className='lg:flex hidden w-64 gap-x-2'>
                     <a
-                      href='https://github.com/circlefin/w3s-sample-user-controlled-client-web'
+                      href='https://github.com/DCAwesome-Beta'
                       target='_blank'
                     >
                       <Button
@@ -76,13 +67,14 @@ export default function RootLayout({
                         }
                         sx={{
                           borderColor: 'grey',  // Set the border color to green
+                          color: 'white'
                         }}
                       >
                         Github
                       </Button>
                     </a>
                     <a
-                      href='https://developers.circle.com/w3s/docs/sample-applications'
+                      href='https://stellarhunt.gitbook.io/dcawesome'
                       target='_blank'
                     >
                       <Button
@@ -90,6 +82,7 @@ export default function RootLayout({
                         startDecorator={<BookOpenIcon width={16} style={{ color: 'black' }} />}
                         sx={{
                           borderColor: 'grey',  // Set the border color to green
+                          color: 'white'
                         }}
                       >
                         Docs
@@ -118,30 +111,27 @@ const AppContainer = ({ children }: { children: React.ReactNode }) => (
     {/* banner for smaller screens */}
     <div className='lg:hidden p-4 flex justify-between items-center gradient-banner'>
       <span className='flex items-center'>
-        <Image
-          src={`/CircleLogo.svg`}
-          alt='Circle Logo'
-          className='invert mr-2'
-          width={20}
-          height={20}
-        />
-        <Typography level='title-md' className='inline'>
-          User-Controlled Wallets
-        </Typography>
+      <div className='lg:hidden block w-64 nav-logo font-bold'>
+        DCAwesome
+      </div>
       </span>
 
       <span className='flex gap-x-2'>
         <a
-          href='https://github.com/circlefin/w3s-sample-user-controlled-client-web'
+          href='https://github.com/DCAwesome-Beta'
           target='_blank'
         >
-          <Button variant='outlined'>Github</Button>
+          <Button variant='outlined' sx={{
+            color: 'white'
+          }}>Github</Button>
         </a>
         <a
-          href='https://developers.circle.com/w3s/docs/sample-applications'
+          href='https://stellarhunt.gitbook.io/dcawesome'
           target='_blank'
         >
-          <Button variant='outlined'>Docs</Button>
+          <Button variant='outlined' sx={{
+            color: 'white'
+          }}>Docs</Button>
         </a>
       </span>
     </div>
@@ -150,6 +140,6 @@ const AppContainer = ({ children }: { children: React.ReactNode }) => (
 );
 
 export const metadata: Metadata = {
-  title: "Programmable Wallet SDK Web Sample App",
-  description: "An example of how to use Circle's Programmable Wallet SDK",
+  title: "DCAwesome | Investment Strategies for everyone",
+  description: "Create personalized, automated cryptocurrency investment strategies across multiple chains",
 };
